@@ -362,6 +362,11 @@ body {
   justify-content: center;
 }
 
+.center {
+  text-align: center;
+  font-size: 25px;
+  padding-top: 55px;
+}
 /*
   SPACING SYSTEM (px)
   2 / 4 / 8 / 12 / 16 / 24 / 32 / 40 / 48 / 64 / 80 / 96 / 128
