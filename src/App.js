@@ -209,18 +209,26 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   useEffect(() => {
     async function fetchMoviesData() {
       try {
         setIsLoading(true);
-        let res = await fetch(
-          `http://www.omdbapi.com/?apikey=${kEY}&s=interstellar`
-        );
+        let res = await fetch(`http://www.omdbapi.com/?apikey=${kEY}&s=dhol`);
+
+        if (!res.ok) throw new Error("something went wrong");
+
         let data = await res.json();
+
+        if (data.Response === "False") {
+          throw new Error("Movie not found");
+        }
         setMovies(data.Search);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -233,7 +241,12 @@ export default function App() {
         <NumResults movies={movies} />
       </NavBar>
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
+        <Box>
+          {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
+        </Box>
         <Box>
           <WatchedSummery watched={watched} />
           <WatchedList watched={watched} />
@@ -250,4 +263,7 @@ function Loader() {
   );
 
   return <div className="spinner">{spinner}</div>;
+}
+function ErrorMessage({ message }) {
+  return <div className="error">{message}</div>;
 }
