@@ -49,19 +49,81 @@ const tempWatchedData = [
   },
 ];
 
+// const tempQuery = "rockstar";
+const kEY = "a537d657";
+export default function App() {
+  const [query, setQuery] = useState("");
+
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    async function fetchMoviesData() {
+      try {
+        setIsLoading(true);
+        setError("");
+        let res = await fetch(
+          `http://www.omdbapi.com/?apikey=${kEY}&s=${query}`
+        );
+
+        if (!res.ok) throw new Error("something went wrong");
+
+        let data = await res.json();
+
+        if (data.Response === "False") {
+          throw new Error("Movie not found");
+        }
+        setMovies(data.Search);
+      } catch (error) {
+        // console.error("Error:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if (query.length < 3) {
+      setMovies([]);
+      setError("");
+      return;
+    }
+
+    fetchMoviesData(); // Invoke the async function
+  }, [query]);
+
+  return (
+    <>
+      <NavBar query={query} setQuery={setQuery}>
+        <NumResults movies={movies} />
+      </NavBar>
+      <Main>
+        <Box>
+          {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
+        </Box>
+        <Box>
+          <WatchedSummery watched={watched} />
+          <WatchedList watched={watched} />
+        </Box>
+      </Main>
+    </>
+  );
+}
+
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
-function NavBar({ children }) {
+function NavBar({ query, setQuery, children }) {
   return (
     <nav className="nav-bar">
       <Logo />
-      <Search />
+      <Search query={query} setQuery={setQuery} />
       {children}
     </nav>
   );
 }
-function Search() {
-  const [query, setQuery] = useState("");
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
@@ -204,57 +266,7 @@ function WatchedMovie({ movie }) {
     </li>
   );
 }
-const kEY = "a537d657";
-export default function App() {
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  useEffect(() => {
-    async function fetchMoviesData() {
-      try {
-        setIsLoading(true);
-        let res = await fetch(`http://www.omdbapi.com/?apikey=${kEY}&s=dhol`);
 
-        if (!res.ok) throw new Error("something went wrong");
-
-        let data = await res.json();
-
-        if (data.Response === "False") {
-          throw new Error("Movie not found");
-        }
-        setMovies(data.Search);
-      } catch (error) {
-        console.error("Error:", error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchMoviesData(); // Invoke the async function
-  }, []);
-
-  return (
-    <>
-      <NavBar>
-        <NumResults movies={movies} />
-      </NavBar>
-      <Main>
-        <Box>
-          {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
-          {isLoading && <Loader />}
-          {!isLoading && !error && <MovieList movies={movies} />}
-          {error && <ErrorMessage message={error} />}
-        </Box>
-        <Box>
-          <WatchedSummery watched={watched} />
-          <WatchedList watched={watched} />
-        </Box>
-      </Main>
-    </>
-  );
-}
 function Loader() {
   const spinner = (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
