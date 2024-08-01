@@ -64,6 +64,25 @@ body {
 .box::-webkit-scrollbar {
   display: none;
 }
+::-webkit-scrollbar {
+  width: 4px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+/* When hovering over the container, show the scrollbar */
+.box:hover::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 2px;
+}
+
+.box:hover::-webkit-scrollbar-thumb:hover,
+.box:hover::-webkit-scrollbar-thumb:active {
+  background-color: #555;
+}
 /* .box::-webkit-scrollbar {
   width: 8px;
 }
