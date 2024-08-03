@@ -13,8 +13,8 @@ const starRating = {
 
 const StarRating = ({
   maxRating = 5,
-  color = "yellow",
-  size = 30,
+  color = "#fcc419",
+  size = 26,
   className = "",
   messages = [],
   onSetRating,

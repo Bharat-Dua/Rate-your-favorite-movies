@@ -1,4 +1,5 @@
 import "./index.css";
+import StarRating from "./StarRating";
 
 import { useState, useEffect } from "react";
 
@@ -211,12 +212,72 @@ function Movie({ movie, onSelectMovie }) {
   );
 }
 function MovieDetails({ selectedMovieId, onCloseMovie }) {
+  const [movie, setMovie] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    Title: title,
+    Actor: actor,
+    Year: year,
+    Poster: poster,
+    imdbRating,
+    Plot: plot,
+    Genre: genre,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    Runtime: runtime,
+  } = movie;
+  useEffect(
+    function () {
+      const fetchMovieDetails = async () => {
+        setIsLoading(true);
+        const response = await fetch(
+          `http://www.omdbapi.com/?apikey=${kEY}&i=${selectedMovieId}`
+        );
+        const data = await response.json();
+        setMovie(data);
+        setIsLoading(false);
+        console.log(data);
+      };
+      fetchMovieDetails();
+    },
+    [selectedMovieId]
+  );
   return (
     <div className="details">
-      <button className="btn-back" onClick={onCloseMovie}>
-        &larr;
-      </button>
-      ;{selectedMovieId}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <header>
+            <button className="btn-back" onClick={onCloseMovie}>
+              &larr;
+            </button>
+            <img src={poster} alt={`poster of ${movie} movie`} />
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>
+                {released} &bull; {runtime}
+              </p>
+              <p>{genre}</p>
+              <p>
+                <span>⭐</span>
+                {imdbRating} IMDB rating
+              </p>
+            </div>
+          </header>
+          <section>
+            <div className="rating">
+              <StarRating size={24} maxRating={10} />
+            </div>
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Starring: {actors}</p>
+            <p>Directed by - {director}</p>
+          </section>
+        </>
+      )}
     </div>
   );
 }
