@@ -72,6 +72,7 @@ export default function App() {
   function handleDeleteWatchedMovie(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
+
   useEffect(() => {
     const controller = new AbortController();
     async function fetchMoviesData() {
@@ -95,8 +96,8 @@ export default function App() {
         setMovies(data.Search);
         setError("");
       } catch (error) {
-        // console.error("Error:", error);
         if (error.name !== "AbortError") {
+          // console.error("Error:", error);
           setError(error.message);
         }
       } finally {
@@ -108,7 +109,7 @@ export default function App() {
       setError("");
       return;
     }
-
+    handleCloseSelectMovie();
     fetchMoviesData();
     return function () {
       controller.abort();
@@ -117,7 +118,11 @@ export default function App() {
 
   return (
     <>
-      <NavBar query={query} setQuery={setQuery}>
+      <NavBar
+        query={query}
+        setQuery={setQuery}
+        onCloseQueryMovie={handleCloseSelectMovie}
+      >
         <NumResults movies={movies} />
       </NavBar>
       <Main>
@@ -161,16 +166,20 @@ const average = (arr) => {
   if (arr.length === 0) return 0;
   return arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
 };
-function NavBar({ query, setQuery, children }) {
+function NavBar({ query, setQuery, children, onCloseQueryMovie }) {
   return (
     <nav className="nav-bar">
       <Logo />
-      <Search query={query} setQuery={setQuery} />
+      <Search
+        query={query}
+        setQuery={setQuery}
+        onCloseQueryMovie={onCloseQueryMovie}
+      />
       {children}
     </nav>
   );
 }
-function Search({ query, setQuery }) {
+function Search({ query, setQuery, onCloseQueryMovie }) {
   return (
     <div className="search-container" style={{ position: "relative" }}>
       <input
@@ -181,8 +190,14 @@ function Search({ query, setQuery }) {
         onChange={(e) => setQuery(e.target.value)}
       />
       {query && (
-        <button className="clear-button" onClick={() => setQuery("")}>
-          &times;
+        <button
+          className="clear-button"
+          onClick={() => {
+            setQuery("");
+            onCloseQueryMovie();
+          }}
+        >
+          X
         </button>
       )}
     </div>
@@ -301,7 +316,22 @@ function MovieDetails({
     onAddWatched(newWatchedMovie);
     onCloseMovie();
   }
-
+  useEffect(
+    function () {
+      function callback() {
+        document.addEventListener("keypress", function (e) {
+          if (e.code === "Escape") {
+            onCloseMovie();
+          }
+        });
+      }
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
+  );
   useEffect(
     function () {
       const fetchMovieDetails = async () => {
@@ -312,7 +342,7 @@ function MovieDetails({
         const data = await response.json();
         setMovie(data);
         setIsLoading(false);
-        console.log(data);
+        // console.log(data);
       };
       fetchMovieDetails();
     },
