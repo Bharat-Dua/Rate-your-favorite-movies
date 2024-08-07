@@ -149,11 +149,16 @@ body {
   font-weight: 600;
   color: #fff;
 }
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
 .search {
   justify-self: center;
   border: none;
-  padding: 1.1rem 1.6rem;
+  padding: 1.1rem 4rem;
   font-size: 1.8rem;
   border-radius: 0.7rem;
   width: 40rem;
@@ -172,6 +177,19 @@ body {
   outline: none;
   box-shadow: 0 2.4rem 2.4rem rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
+}
+.clear-button {
+  position: absolute;
+  right: 12px; /* Positioning the button within the search container */
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--color-text-dark);
+}
+
+.clear-button:hover {
+  color: var(--color-text);
 }
 
 .num-results {
