@@ -73,12 +73,16 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchMoviesData() {
       try {
         setIsLoading(true);
         setError("");
         let res = await fetch(
-          `http://www.omdbapi.com/?apikey=${kEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${kEY}&s=${query}`,
+          {
+            signal: controller.signal,
+          }
         );
 
         if (!res.ok) throw new Error("something went wrong");
@@ -89,9 +93,12 @@ export default function App() {
           throw new Error("Movie not found");
         }
         setMovies(data.Search);
+        setError("");
       } catch (error) {
         // console.error("Error:", error);
-        setError(error.message);
+        if (error.name !== "AbortError") {
+          setError(error.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -102,7 +109,10 @@ export default function App() {
       return;
     }
 
-    fetchMoviesData(); // Invoke the async function
+    fetchMoviesData();
+    return function () {
+      controller.abort();
+    }; // Invoke the async function
   }, [query]);
 
   return (
@@ -308,61 +318,17 @@ function MovieDetails({
     },
     [selectedMovieId]
   );
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `movie || ${title}`;
+      return function () {
+        document.title = "usePopcorn";
+      };
+    },
+    [title]
+  );
   return (
-    // <div className="details">
-    //   {isLoading ? (
-    //     <Loader />
-    //   ) : (
-    //     <>
-    //       <header>
-    //         <button className="btn-back" onClick={onCloseMovie}>
-    //           &larr;
-    //         </button>
-    //         <img src={poster} alt={`poster of ${movie} movie`} />
-    //         <div className="details-overview">
-    //           <h2>{title}</h2>
-    //           <p>
-    //             {released} &bull; {runtime}
-    //           </p>
-    //           <p>{genre}</p>
-    //           <p>
-    //             <span>⭐</span>
-    //             {imdbRating} IMDB rating
-    //           </p>
-    //         </div>
-    //       </header>
-    //       <section>
-    //         <div className="rating">
-    //           {!isWatched ? (
-    //             <>
-    //               <StarRating
-    //                 size={24}
-    //                 maxRating={10}
-    //                 onSetRating={setUserRating}
-    //               />
-    //               {userRating > 0 && (
-    //                 <button className="btn-add" onClick={handleAdd}>
-    //                   + Add to list
-    //                 </button>
-    //               )}
-    //             </>
-    //           ) : (
-    //             <p>
-    //               You rated this movie with: {watchedMovieUserRating}{" "}
-    //               <span>⭐</span>
-    //             </p>
-    //           )}
-    //         </div>
-    //         <p>
-    //           <em>{plot}</em>
-    //         </p>
-    //         <p>Starring: {actors}</p>
-    //         <p>Directed by - {director}</p>
-    //       </section>
-    //     </>
-    //   )}
-    // </div>
-    //  break this into components
     <div className="details">
       {isLoading ? (
         <Loader />
@@ -391,6 +357,63 @@ function MovieDetails({
       )}
     </div>
   );
+  // return (
+  //   // <div className="details">
+  //   //   {isLoading ? (
+  //   //     <Loader />
+  //   //   ) : (
+  //   //     <>
+  //   //       <header>
+  //   //         <button className="btn-back" onClick={onCloseMovie}>
+  //   //           &larr;
+  //   //         </button>
+  //   //         <img src={poster} alt={`poster of ${movie} movie`} />
+  //   //         <div className="details-overview">
+  //   //           <h2>{title}</h2>
+  //   //           <p>
+  //   //             {released} &bull; {runtime}
+  //   //           </p>
+  //   //           <p>{genre}</p>
+  //   //           <p>
+  //   //             <span>⭐</span>
+  //   //             {imdbRating} IMDB rating
+  //   //           </p>
+  //   //         </div>
+  //   //       </header>
+  //   //       <section>
+  //   //         <div className="rating">
+  //   //           {!isWatched ? (
+  //   //             <>
+  //   //               <StarRating
+  //   //                 size={24}
+  //   //                 maxRating={10}
+  //   //                 onSetRating={setUserRating}
+  //   //               />
+  //   //               {userRating > 0 && (
+  //   //                 <button className="btn-add" onClick={handleAdd}>
+  //   //                   + Add to list
+  //   //                 </button>
+  //   //               )}
+  //   //             </>
+  //   //           ) : (
+  //   //             <p>
+  //   //               You rated this movie with: {watchedMovieUserRating}{" "}
+  //   //               <span>⭐</span>
+  //   //             </p>
+  //   //           )}
+  //   //         </div>
+  //   //         <p>
+  //   //           <em>{plot}</em>
+  //   //         </p>
+  //   //         <p>Starring: {actors}</p>
+  //   //         <p>Directed by - {director}</p>
+  //   //       </section>
+  //   //     </>
+  //   //   )}
+  //   // </div>
+  //   //  break this into components
+
+  // );
 }
 function MovieHeader({
   title,
