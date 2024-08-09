@@ -1,7 +1,7 @@
 import "./index.css";
 import StarRating from "./StarRating";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // const tempMovieData = [
 //   {
@@ -56,9 +56,13 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  // const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(function () {
+    const storedWatched = localStorage.getItem("watched");
+    return storedWatched ? JSON.parse(storedWatched) : [];
+  });
 
   function handleSelectMovie(id) {
     setSelectedMovieId((selectedId) => (selectedId === id ? null : id));
@@ -68,11 +72,18 @@ export default function App() {
   }
   function handleAddWatchedMovie(movie) {
     setWatched((watched) => [...watched, movie]);
+    // one way to add data into local storage
+    localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
   function handleDeleteWatchedMovie(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
-
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  );
   useEffect(() => {
     const controller = new AbortController();
     async function fetchMoviesData() {
@@ -180,11 +191,16 @@ function NavBar({ query, setQuery, children, onCloseQueryMovie }) {
   );
 }
 function Search({ query, setQuery, onCloseQueryMovie }) {
+  const inputEl = useRef(null);
+  useEffect(function () {
+    inputEl.current.focus();
+  }, []);
   return (
     <div className="search-container" style={{ position: "relative" }}>
       <input
         className="search"
         type="text"
+        ref={inputEl}
         placeholder="Search movies..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
