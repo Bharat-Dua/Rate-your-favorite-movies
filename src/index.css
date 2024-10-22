@@ -180,10 +180,10 @@ body {
 }
 .clear-button {
   position: absolute;
-  right: 12px; /* Positioning the button within the search container */
+  right: 35px; /* Positioning the button within the search container */
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   color: var(--color-text-dark);
 }
