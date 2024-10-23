@@ -425,6 +425,51 @@ body {
   font-size: 25px;
   padding-top: 55px;
 }
+@media (max-width: 48em) {
+  .nav-bar {
+    padding: 0 1.2rem;
+  }
+  .logo {
+    gap: 0rem;
+    margin-right: 5px;
+  }
+  .num-results {
+    font-size: 1.6rem;
+  }
+  .rating {
+    padding-left: 0.2rem;
+  }
+}
+
+@media (max-width: 27em) {
+  body {
+    width: 100vw;
+    height: 100vh;
+  }
+  .nav-bar {
+    width: 88vw;
+  }
+  .logo {
+    display: block;
+  }
+  .logo h1 {
+    display: none;
+  }
+  /* .search-container {
+    width: 50%;
+  } */
+  .search-container .search {
+    width: 24rem;
+    padding: 1.1rem 1rem;
+  }
+  .clear-button {
+    right: 24px;
+  }
+  .num-results {
+    font-size: 1.2rem;
+    margin-left: 6px;
+  }
+}
 
 /*
   SPACING SYSTEM (px)
