@@ -1,3 +1,63 @@
+# ⭐ Rate Your Favorite Movies
+
+Rate Your Favorite Movies is a web application that allows users to search for movies and rate them based on their preferences. Built with React.js and integrated with the OMDb API, this project aims to provide a seamless and interactive user experience for movie enthusiasts.
+
+## ✨ Features
+
+- **Movie Search**: Easily find your favorite movies using the search feature.
+- **Rating System**: Rate movies and see personalized recommendations.
+- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **User-friendly Interface**: Intuitive layout to enhance user experience.
+
+## 🛠️ Technologies Used
+
+- **Frontend**:
+  - React.js
+  - JavaScript (ES6+)
+  - HTML
+  - CSS (Flexbox, Grid)
+- **API**: OMDb API
+- **Version Control**: Git, GitHub
+
+## 💻 Usage
+
+- Search for your favorite movies using the search bar.
+- Click on a movie to view details and rate it.
+- Your ratings will be saved in local storage for a seamless experience across sessions.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js installed on your machine.
+- Basic understanding of React.js.
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+   git clone https://github.com/Bharat-Dua/Rate-your-favorite-movies.git
+```
+
+2. Navigate to the project directory:
+
+```
+cd Rate-your-favorite-movies
+```
+
+3. Install the dependencies:
+
+```
+npm install
+```
+
+4. Start the application:
+
+```
+npm start
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
